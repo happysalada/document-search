@@ -73,6 +73,12 @@
               help = "preview the release build";
               command = "pnpm run preview";
             }
+            {
+              name = "logs";
+              category = "dev";
+              help = "tail prod logs for inspection";
+              command = "wrangler pages deployment tail --project-name document-search";
+            }
           ];
         };
       }

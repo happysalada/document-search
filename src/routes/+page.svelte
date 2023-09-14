@@ -54,7 +54,6 @@
       <form
         method="POST"
         enctype="multipart/form-data"
-        action="?/upload"
         use:enhance={() => {
           loading = true;
           return async ({ result }) => {

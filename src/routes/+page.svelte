@@ -8,12 +8,6 @@
   let loading = false;
   let files: any;
   let fileInput: HTMLInputElement;
-  enum State {
-    Upload,
-    Edit,
-    Result,
-  }
-  let state = State.Upload;
   let error: string | undefined = undefined;
 
   function handleFilesSelect(e: {
@@ -24,22 +18,22 @@
     console.log(fileRejections, "rejected");
   }
 
-  const downloadDocx = async () => {
-    const filename = "Statement_of_work.pdf";
-    const response = await fetch(`/${filename}`);
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  // const downloadDoc = async () => {
+  //   const filename = "Statement_of_work.pdf";
+  //   const response = await fetch(`/${filename}`);
+  //   const blob = await response.blob();
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement("a");
+  //   a.href = url;
+  //   a.download = filename;
+  //   a.click();
+  //   URL.revokeObjectURL(url);
+  // };
 </script>
 
 <MetaTags
-  title="Agora: Contract automation - Creation. Benchmarking. AI-Powered content."
-  description="Agora is automating the creation of your contracts, accelerating contract creation cycle, reducing cost of contract creation, generating AI-powered benchmarked content to reduce contract risks of cost and timeline overrun"
+  title="Document search"
+  description="Drop a document and search for similar ones"
 />
 
 <body

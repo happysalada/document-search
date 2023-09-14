@@ -5,12 +5,8 @@
 	import type { PageData } from "./$types";
 
 	import Nav from "$lib/Nav.svelte";
-	import PhoneInput from "$lib/PhoneInput.svelte";
 
 	export let data: PageData;
-
-	// just needed to prevent the form from sending if phone number is invalid
-	let phoneValid = false;
 
 	const { form, errors, constraints, enhance } = superForm(data.form, {
 		validators: {
@@ -18,7 +14,6 @@
 				input.length < 2 ? "Name needs to be at least 2 characters" : undefined,
 			country: (input) =>
 				input.length == 0 ? "Country cannot be empty" : undefined,
-			phone: (_input) => (phoneValid ? undefined : "Invalid phone number"),
 			email: (input) =>
 				EmailValidator.validate(input) ? undefined : "Email is invalid",
 			password: (input) =>
@@ -30,10 +25,10 @@
 					? "Password confirmation does not match password"
 					: undefined,
 		},
-		onError({result, message}) {
-			console.log("error")
-			console.log(result)
-			console.log(message)
+		onError({ result, message }) {
+			console.log("error");
+			console.log(result);
+			console.log(message);
 		},
 	});
 </script>
@@ -165,34 +160,6 @@
 					{#if $errors.country}
 						<p class="mt-2 text-sm text-red-600" id="email-error">
 							{$errors.country}
-						</p>
-					{/if}
-				</div>
-
-				<div class="sm:col-span-2">
-					<label
-						for="phone"
-						class="block text-sm font-medium leading-6 text-gray-900"
-						>Phone</label
-					>
-					<div class="mt-2 flex justify-between">
-						<input
-							id="phone"
-							name="phone"
-							type="hidden"
-							bind:value={$form.phone}
-						/>
-
-						<PhoneInput
-							bind:value={$form.phone}
-							bind:valid={phoneValid}
-							selectedCountry={"CO"}
-							options={{ autoPlaceholder: true, spaces: true }}
-						/>
-					</div>
-					{#if $errors.phone}
-						<p class="mt-2 text-sm text-red-600" id="email-error">
-							{$errors.phone}
 						</p>
 					{/if}
 				</div>

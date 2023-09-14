@@ -6,4 +6,10 @@ declare namespace App {
 	// interface Locals {}
 	// interface PageData {}
 	// interface Platform {}
+	interface Platform {
+		env?: {
+			UNSTRUCTURED_API_KEY: string;
+			HUGGINGFACE_API_TOKEN: string;
+		}
+	}
 }

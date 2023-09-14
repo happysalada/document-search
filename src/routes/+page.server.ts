@@ -1,6 +1,6 @@
 import type { Actions } from "./$types";
 import { error } from "@sveltejs/kit";
-// import { OPENAI_API_KEY } from "$env/static/private";
+import { UNSTRUCTURED_API_KEY, HUGGINGFACE_API_TOKEN } from "$env/static/private";
 import { getEncoding } from 'js-tiktoken';
 
 // our embedding accept maximum of 512 but we use a different tokenizer
@@ -19,7 +19,7 @@ export const actions = {
           body,
           headers: {
             Accept: "application/json",
-            "unstructured-api-key": "0dl0n5fQcC4iSArTq4i1OfXZ7bvmiI",
+            "unstructured-api-key": UNSTRUCTURED_API_KEY,
             "User-Agent": "curl/7.87.0",
           },
         },

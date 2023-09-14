@@ -18,6 +18,7 @@
           nodejs-slim_latest
           nodePackages_latest.pnpm
           nodePackages_latest.wrangler
+          nodePackages_latest.dotenv-cli
         ];
       in
       {

@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@huggingface/inference':
+    specifier: ^2.6.1
+    version: 2.6.1
   email-validator:
     specifier: ^2.0.4
     version: 2.0.4
@@ -371,6 +374,11 @@ packages:
     resolution: {integrity: sha512-1S8uAY/MTJqVx0SC4epBq+N2yhuwtNwLbJYNZyhL2pO1ZVKn5HFXav5T41Ryzy9K9V7ZId2JB2oy/W4aCd9/2w==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@huggingface/inference@2.6.1:
+    resolution: {integrity: sha512-qFYchgOCPeEkZJKiSr7Kz62QwukJtgkeQCT7Q0SSKUcvHpTQVNJp6i/JrJMR4dBdzQysJ1SZDC0pLBBnnskTag==}
+    engines: {node: '>=18'}
+    dev: false
 
   /@humanwhocodes/config-array@0.11.11:
     resolution: {integrity: sha512-N2brEuAadi0CcdeMXUkhbZB84eskAc8MEX1By6qEchoVywSgXPIjou4rYsl0V3Hj0ZnuGycGCjdNgockbzeWNA==}

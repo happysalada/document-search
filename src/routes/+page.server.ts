@@ -1,11 +1,13 @@
 import type { Actions } from "./$types";
 import { error } from "@sveltejs/kit";
+import { HfInference } from '@huggingface/inference';
 import { UNSTRUCTURED_API_KEY, HUGGINGFACE_API_TOKEN } from "$env/static/private";
 import { getEncoding } from 'js-tiktoken';
 
 // our embedding accept maximum of 512 but we use a different tokenizer
 // so we account for a difference in tokenization
 const CHUNK_SIZE = 500;
+const hf = new HfInference(HUGGINGFACE_API_TOKEN);
 
 export const actions = {
   default: async ({ request }) => {
@@ -31,9 +33,12 @@ export const actions = {
         const json = await response.json();
         const documentText = json.map(({ text }: { text: string }) => text).join("\n");
         let encoding = getEncoding("cl100k_base");
-        let tokenList = chunkArray(encoding.encode(documentText), CHUNK_SIZE).map(chunk => encoding.decode(chunk));
-        console.log(tokenList)
-        return tokenList
+        let chunks = chunkArray(encoding.encode(documentText), CHUNK_SIZE).map(chunk => encoding.decode(chunk));
+        let embeddings = await Promise.all(chunks.map(chunk => hf.featureExtraction({
+          model: 'Xenova/bge-large-en',
+          inputs: chunk,
+        })));
+        return embeddings
       }
     } catch (err) {
       console.log(err);

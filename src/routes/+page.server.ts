@@ -34,10 +34,14 @@ export const actions = {
         const documentText = json.map(({ text }: { text: string }) => text).join("\n");
         let encoding = getEncoding("cl100k_base");
         let chunks = chunkArray(encoding.encode(documentText), CHUNK_SIZE).map(chunk => encoding.decode(chunk));
-        let embeddings = await Promise.all(chunks.map(chunk => hf.featureExtraction({
-          model: 'Xenova/bge-large-en',
-          inputs: chunk,
-        })));
+        let embeddings = await Promise.all(chunks.map(async chunk => {
+          let response = await hf.featureExtraction({
+            model: 'Xenova/bge-large-en',
+            inputs: chunk,
+          })
+          console.log(response)
+          return response
+        }));
         return embeddings
       }
     } catch (err) {

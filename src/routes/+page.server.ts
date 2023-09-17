@@ -36,7 +36,7 @@ export const actions = {
         let chunks = chunkArray(encoding.encode(documentText), CHUNK_SIZE).map(chunk => encoding.decode(chunk));
         let embeddings = await Promise.all(chunks.map(async chunk => {
           let response = await hf.featureExtraction({
-            model: 'Xenova/bge-large-en',
+            model: 'BAAI/bge-large-en',
             inputs: chunk,
           })
           console.log(response)

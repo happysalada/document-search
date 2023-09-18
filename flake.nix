@@ -44,6 +44,7 @@
           src = ./.;
           nativeBuildInputs = [
             makeBinaryWrapper
+            nodejs-slim_latest # required by vite
           ];
           buildInputs = [ bun ];
 

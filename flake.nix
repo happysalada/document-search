@@ -80,8 +80,8 @@
             ln -s ${node_modules}/node_modules $out
             cp -R ./build/* $out
 
+            # bun is referenced naked in the package.json generated script
             makeBinaryWrapper ${bun}/bin/bun $out/bin/document-search \
-              # bun is referenced naked in the package.json generated script
               --prefix PATH : ${lib.makeBinPath [ bun ]} \
               --add-flags "run --prefer-offline --no-install --cwd $out start"
 

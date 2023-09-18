@@ -133,7 +133,7 @@
                 };
 
                 environment = {
-                  PORT = cfg.port;
+                  PORT = toString cfg.port;
                   HOST = cfg.host;
                 };
               };

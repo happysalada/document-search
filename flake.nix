@@ -65,9 +65,6 @@
 
             bun run build
 
-            substituteInPlace ./build/package.json \
-              --replace "bun" "${bun}/bin/bun"
-
             runHook postBuild
           '';
 
@@ -79,6 +76,7 @@
             cp -R ./build/* $out
 
             makeBinaryWrapper ${bun}/bin/bun $out/bin/document-search \
+              --prefix PATH : ${lib.makeBinPath [ bun nodejs-slim_latest ]} \
               --add-flags "run --prefer-offline --no-install --cwd $out start"
 
             runHook postInstall

@@ -62,6 +62,8 @@
           buildPhase = ''
             runHook preBuild
 
+            /usr/bin/env node --help
+
             bun run build
 
             runHook postBuild

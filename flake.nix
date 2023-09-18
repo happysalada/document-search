@@ -75,7 +75,7 @@
             ln -s ${node_modules}/node_modules $out
             cp -R ./build/* $out
 
-            makeWrapper ${bun}/bin/bun $out/bin/document-search \
+            makeBinaryWrapper ${bun}/bin/bun $out/bin/document-search \
               --add-flags "run --prefer-offline --no-install --cwd $out start"
 
             runHook postInstall

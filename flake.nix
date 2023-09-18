@@ -50,15 +50,20 @@
           configurePhase = ''
             runHook preConfigure
 
+            # node modules need to be copied to substitute for reference
+            # substitution step cannot be done before otherwise
+            # nix complains about unallowed reference in FOD
             cp -R ${node_modules}/node_modules .
+            # bun installs .bin package with a usr bin env ref to node
+            # replace any ref for bin that are used
             substituteInPlace node_modules/.bin/vite \
               --replace "/usr/bin/env node" "${nodejs-slim_latest}/bin/node"
 
             runHook postConfigure
           '';
 
-          env.UNSTRUCTURED_API_KEY = "REPLACE_ME";
-          env.HUGGINGFACE_API_TOKEN = "REPLACE_ME";
+          env.UNSTRUCTURED_API_KEY = "REPLACE_ME_UNSTRUCTURED_API_KEY";
+          env.HUGGINGFACE_API_TOKEN = "REPLACE_ME_HUGGINGFACE_API_TOKEN";
 
           buildPhase = ''
             runHook preBuild
@@ -76,7 +81,8 @@
             cp -R ./build/* $out
 
             makeBinaryWrapper ${bun}/bin/bun $out/bin/document-search \
-              --prefix PATH : ${lib.makeBinPath [ bun nodejs-slim_latest ]} \
+              # bun is referenced naked in the package.json generated script
+              --prefix PATH : ${lib.makeBinPath [ bun ]} \
               --add-flags "run --prefer-offline --no-install --cwd $out start"
 
             runHook postInstall

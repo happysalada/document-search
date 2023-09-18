@@ -9,7 +9,7 @@ const config = {
 		isoImport(),
 		nodePolyfills(),
 		sveltekit(),
-		ViteImageOptimizer({})
+		// ViteImageOptimizer({})
 	],
 };
 

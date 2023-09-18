@@ -124,11 +124,13 @@
             };
             config = lib.mkIf cfg.enable {
 
-              serviceConfig = {
-                ExecStart = "${cfg.package}/bin/document-search";
-                DynamicUser = true;
-                Restart = "on-failure";
-                StateDirectory = "document-search";
+             systemd.services.document-search = {
+                serviceConfig = {
+                  ExecStart = "${cfg.package}/bin/document-search";
+                  DynamicUser = true;
+                  Restart = "on-failure";
+                  StateDirectory = "document-search";
+                };
               };
             };
           };

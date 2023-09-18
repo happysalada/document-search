@@ -19,13 +19,13 @@
           nodePackages_latest.dotenv-cli
           bun
         ];
-        node_modules = pkgs.stdenv.mkDerivation {
+        node_modules = with pkgs; stdenv.mkDerivation {
           pname = "document-search-node_modules";
           version = "0.0.1";
-          impureEnvVars = pkgs.lib.fetchers.proxyImpureEnvVars
+          impureEnvVars = lib.fetchers.proxyImpureEnvVars
             ++ [ "GIT_PROXY_COMMAND" "SOCKS_SERVER" ];
           src = ./.;
-          nativeBuildInputs = [ pkgs.bun];
+          nativeBuildInputs = [ bun ];
           dontConfigure = true;
           buildPhase = ''
             bun install --no-progress --frozen-lockfile
@@ -34,7 +34,7 @@
             mkdir -p $out/node_modules
             cp -R ./node_modules $out
           '';
-          outputHash = "sha256-jnMzhj3XBoWSuXv5MhZ3JzwM/HtyL0zN7uFD45gYzr8=";
+          outputHash = if stdenv.isLinux then "sha256-vNPLtQVDLeR+TenFM0SIQ7rminT3fOUN98obaibeEW4=" else "sha256-nkPbmg/kG8Id8nGYz2x0drarDD/1qsCPL4Dgg21tmNw=";
           outputHashAlgo = "sha256";
           outputHashMode = "recursive";
         };

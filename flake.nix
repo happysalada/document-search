@@ -125,6 +125,10 @@
             config = lib.mkIf cfg.enable {
 
              systemd.services.document-search = {
+                description = "Search engine for documents";
+                after = [ "network.target" ];
+                wantedBy = [ "multi-user.target" ];
+
                 serviceConfig = {
                   ExecStart = "${cfg.package}/bin/document-search";
                   DynamicUser = true;

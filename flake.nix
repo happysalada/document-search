@@ -26,12 +26,14 @@
             ++ [ "GIT_PROXY_COMMAND" "SOCKS_SERVER" ];
           src = ./.;
           nativeBuildInputs = [ bun ];
+          buildInputs = [ nodejs-slim_latest ];
           dontConfigure = true;
           buildPhase = ''
             bun install --no-progress --frozen-lockfile
           '';
           installPhase = ''
             mkdir -p $out/node_modules
+
             cp -R ./node_modules $out
           '';
           outputHash = if stdenv.isLinux then "sha256-vNPLtQVDLeR+TenFM0SIQ7rminT3fOUN98obaibeEW4=" else "sha256-nkPbmg/kG8Id8nGYz2x0drarDD/1qsCPL4Dgg21tmNw=";
@@ -42,16 +44,15 @@
           pname = "document-search";
           version = "0.0.1";
           src = ./.;
-          nativeBuildInputs = [
-            makeBinaryWrapper
-            nodejs-slim_latest # required by vite
-          ];
+          nativeBuildInputs = [ makeBinaryWrapper ];
           buildInputs = [ bun ];
 
           configurePhase = ''
             runHook preConfigure
 
-            ln -s ${node_modules}/node_modules node_modules
+            cp -R ${node_modules}/node_modules .
+            substituteInPlace node_modules/.bin/vite \
+              --replace "/usr/bin/env node" "${nodejs-slim_latest}/bin/node"
 
             runHook postConfigure
           '';
@@ -61,8 +62,6 @@
 
           buildPhase = ''
             runHook preBuild
-
-            /usr/bin/env node --help
 
             bun run build
 

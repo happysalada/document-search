@@ -88,9 +88,54 @@
             runHook postInstall
           '';
         };
+        module = { config, lib }: 
+        let
+          cfg = config.services.document-search;
+        in
+          {
+            options.services.document-search = {
+              enable = lib.mkEnableOption (lib.mdDoc "A prototype document search engine");
+
+              package = lib.mkOption {
+                defaultText = lib.literalExpression "pkgs.document-search";
+                type = lib.types.package;
+                description = lib.mdDoc ''
+                  Which derivation to use.
+                '';
+              };
+
+              host = lib.mkOption {
+                type = lib.types.str;
+                description = lib.mdDoc ''
+                  The host that document-search will connect to.
+                '';
+                default = "127.0.0.1";
+                example = "127.0.0.1";
+              };
+
+              port = lib.mkOption {
+                type = lib.types.port;
+                description = lib.mdDoc ''
+                  The port that document-search will connect to.
+                '';
+                default = 3333;
+                example = 3333;
+              };
+            };
+            config = lib.mkIf cfg.enable {
+
+              serviceConfig = {
+                ExecStart = "${cfg.package}/bin/document-search";
+                DynamicUser = true;
+                Restart = "on-failure";
+                StateDirectory = "document-search";
+              };
+            };
+          };
       in
       {
         packages.default = document-search;
+        nixosModules.default = module;
         devShell = pkgs.devshell.mkShell {
           inherit packages;
           env = [

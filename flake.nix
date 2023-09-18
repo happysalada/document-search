@@ -131,6 +131,11 @@
                   Restart = "on-failure";
                   StateDirectory = "document-search";
                 };
+
+                environment = {
+                  PORT = cfg.port;
+                  HOST = cfg.host;
+                };
               };
             };
           };

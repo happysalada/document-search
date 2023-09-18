@@ -88,7 +88,7 @@
             runHook postInstall
           '';
         };
-        module = { config, lib }: 
+        module = { config, lib, ... }: 
         let
           cfg = config.services.document-search;
         in

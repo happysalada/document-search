@@ -65,6 +65,9 @@
 
             bun run build
 
+            substituteInPlace ./build/package.json \
+              --replace "bun" "${bun}/bin/bun"
+
             runHook postBuild
           '';
 

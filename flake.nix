@@ -16,12 +16,72 @@
         };
         packages = with pkgs; [
           nodejs-slim_latest
-          nodePackages_latest.pnpm
-          nodePackages_latest.wrangler
           nodePackages_latest.dotenv-cli
+          bun
         ];
+        node_modules = pkgs.stdenv.mkDerivation {
+          pname = "document-search-node_modules";
+          version = "0.0.1";
+          impureEnvVars = pkgs.lib.fetchers.proxyImpureEnvVars
+            ++ [ "GIT_PROXY_COMMAND" "SOCKS_SERVER" ];
+          src = ./.;
+          nativeBuildInputs = [ pkgs.bun];
+          dontConfigure = true;
+          buildPhase = ''
+            bun install --no-progress --frozen-lockfile
+          '';
+          installPhase = ''
+            mkdir -p $out/node_modules
+            cp -R ./node_modules $out
+          '';
+          outputHash = "sha256-jnMzhj3XBoWSuXv5MhZ3JzwM/HtyL0zN7uFD45gYzr8=";
+          outputHashAlgo = "sha256";
+          outputHashMode = "recursive";
+        };
+        document-search = with pkgs; stdenv.mkDerivation {
+          pname = "document-search";
+          version = "0.0.1";
+          src = ./.;
+          nativeBuildInputs = [
+            makeBinaryWrapper
+          ];
+          buildInputs = [ bun ];
+
+          configurePhase = ''
+            runHook preConfigure
+
+            ln -s ${node_modules}/node_modules node_modules
+
+            runHook postConfigure
+          '';
+
+          env.UNSTRUCTURED_API_KEY = "REPLACE_ME";
+          env.HUGGINGFACE_API_TOKEN = "REPLACE_ME";
+
+          buildPhase = ''
+            runHook preBuild
+
+            bun run build
+
+            runHook postBuild
+          '';
+
+          installPhase = ''
+            runHook preInstall
+
+            mkdir -p $out/bin
+            ln -s ${node_modules}/node_modules $out
+            cp -R ./build/* $out
+
+            makeWrapper ${bun}/bin/bun $out/bin/document-search \
+              --add-flags "run --prefer-offline --no-install --cwd $out start"
+
+            runHook postInstall
+          '';
+        };
       in
       {
+        packages.default = document-search;
         devShell = pkgs.devshell.mkShell {
           inherit packages;
           env = [

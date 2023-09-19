@@ -121,6 +121,24 @@
                 default = 3333;
                 example = 3333;
               };
+
+              unstructuredApiKeyPath = lib.mkOption {
+                type = lib.types.path;
+                description = lib.mdDoc ''
+                  Path to the unstructured api key secret file.
+                '';
+                default = "";
+                example = "config.age.secrets.UNSTRUCTURED_API_KEY.path";
+              };
+
+              huggingfaceApiTokenPath = lib.mkOption {
+                type = lib.types.path;
+                description = lib.mdDoc ''
+                  Path to the huggingface api token secret file.
+                '';
+                default = "";
+                example = "config.age.secrets.HUGGINGFACE_API_TOKEN.path";
+              };
             };
             config = lib.mkIf cfg.enable {
 
@@ -130,11 +148,21 @@
                 wantedBy = [ "multi-user.target" ];
 
                 serviceConfig = {
-                  ExecStart = "${cfg.package}/bin/document-search";
                   DynamicUser = true;
                   Restart = "on-failure";
                   StateDirectory = "document-search";
+                  LoadCredential = [
+                    "UNSTRUCTURED_API_KEY_FILE:${cfg.unstructuredApiKeyPath}"
+                    "HUGGINGFACE_API_TOKEN_FILE:${cfg.huggingfaceApiTokenPath}"
+                  ];
                 };
+
+                script = ''
+                  export UNSTRUCTURED_API_KEY=$(${pkgs.systemd}/bin/systemd-creds cat UNSTRUCTURED_API_KEY_FILE)
+                  export HUGGINGFACE_API_TOKEN=$(${pkgs.systemd}/bin/systemd-creds cat HUGGINGFACE_API_TOKEN_FILE)
+                  exec ${cfg.package}/bin/document-search
+                '';
+
 
                 environment = {
                   PORT = toString cfg.port;

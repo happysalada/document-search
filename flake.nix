@@ -122,6 +122,15 @@
                 example = 3333;
               };
 
+              origin = lib.mkOption {
+                type = lib.types.str;
+                description = lib.mdDoc ''
+                  The origin from which the app will be served.
+                '';
+                default = "";
+                example = "search.toagora.com";
+              };
+
               unstructuredApiKeyPath = lib.mkOption {
                 type = lib.types.path;
                 description = lib.mdDoc ''
@@ -167,6 +176,7 @@
                 environment = {
                   PORT = toString cfg.port;
                   HOST = cfg.host;
+                  ORIGIN = cfg.origin;
                 };
               };
             };

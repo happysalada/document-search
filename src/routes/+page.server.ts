@@ -1,7 +1,7 @@
 import type { Actions } from "./$types";
 import { error } from "@sveltejs/kit";
 import { HfInference } from '@huggingface/inference';
-import { UNSTRUCTURED_API_KEY, HUGGINGFACE_API_TOKEN } from "$env/dynamic/private";
+import { UNSTRUCTURED_API_KEY, HUGGINGFACE_API_TOKEN } from "$env/dynamic/public";
 import { getEncoding } from 'js-tiktoken';
 
 // our embedding accept maximum of 512 but we use a different tokenizer

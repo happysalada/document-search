@@ -192,6 +192,7 @@
                   PORT = toString cfg.port;
                   HOST = cfg.host;
                   ORIGIN = cfg.origin;
+                  COLLECTION = cfg.collection;
                 };
               };
             };

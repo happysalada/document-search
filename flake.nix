@@ -2,7 +2,7 @@
   description = "Just a shell for now";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     devshell.url = "github:numtide/devshell";
     devshell.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -14,10 +14,16 @@
         pkgs = import nixpkgs {
           inherit system overlays;
         };
+        pythonPackages = ps: with ps; [
+          qdrant-client
+          fastembed
+          python-lsp-server
+        ] ++ qdrant-client.optional-dependencies.fastembed;
         packages = with pkgs; [
           nodejs-slim_latest
           nodePackages_latest.dotenv-cli
           bun
+          (python3.withPackages pythonPackages)
         ];
         node_modules = with pkgs; stdenv.mkDerivation {
           pname = "document-search-node_modules";
@@ -147,6 +153,15 @@
                 '';
                 default = "";
                 example = "config.age.secrets.HUGGINGFACE_API_TOKEN.path";
+              };
+
+              collection = lib.mkOption {
+                type = lib.types.str;
+                description = lib.mdDoc ''
+                  The name of the collection that will used for search.
+                '';
+                default = "";
+                example = "agora_anonymised_2";
               };
             };
             config = lib.mkIf cfg.enable {

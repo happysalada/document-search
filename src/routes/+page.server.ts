@@ -35,14 +35,29 @@ export const actions = {
         let encoding = getEncoding("cl100k_base");
         let chunks = chunkArray(encoding.encode(documentText), CHUNK_SIZE).map(chunk => encoding.decode(chunk));
         let embeddings = await Promise.all(chunks.map(async chunk => {
-          let response = await hf.featureExtraction({
-            model: 'BAAI/bge-large-en-v1.5',
+          let features = await hf.featureExtraction({
+            model: 'BAAI/bge-base-en-v1.5',
             inputs: chunk,
-          })
-          console.log(response)
-          return response
+          }) as number[]
+          return features
         }));
-        return embeddings
+        console.log(embeddings)
+        const qdrantSearchRespone = await fetch(
+          `https://qdrant.megzari.com/collections/${env.COLLECTION}/points/search/batch`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              searches: embeddings.map(embedding => ({ vector: embedding, with_payload: true }))
+            }),
+            headers: {
+              Accept: "application/json",
+            },
+          },
+        );
+        const qdrantSearchJson = await qdrantSearchRespone.json();
+        console.log(qdrantSearchJson)
+        let ordered = qdrantSearchJson.result.flat().sort((a, b) => b.score - a.score);
+        return ordered
       }
     } catch (err) {
       console.log(err);

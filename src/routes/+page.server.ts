@@ -34,29 +34,27 @@ export const actions = {
         const documentText = json.map(({ text }: { text: string }) => text).join("\n");
         let encoding = getEncoding("cl100k_base");
         let chunks = chunkArray(encoding.encode(documentText), CHUNK_SIZE).map(chunk => encoding.decode(chunk));
-        let embeddings = await Promise.all(chunks.map(async chunk => {
-          let features = await hf.featureExtraction({
+        let results = await Promise.all(chunks.map(async chunk => {
+          let embeddings = await hf.featureExtraction({
             model: 'BAAI/bge-base-en-v1.5',
             inputs: chunk,
           }) as number[]
-          return features
-        }));
-        console.log(embeddings)
-        const qdrantSearchRespone = await fetch(
-          `https://qdrant.megzari.com/collections/${env.COLLECTION}/points/search/batch`,
-          {
-            method: "POST",
-            body: JSON.stringify({
-              searches: embeddings.map(embedding => ({ vector: embedding, with_payload: true, limit: 2 }))
-            }),
-            headers: {
-              Accept: "application/json",
+          const qdrantSearchRespone = await fetch(
+            `https://qdrant.megzari.com/collections/${env.COLLECTION}/points/search`,
+            {
+              method: "POST",
+              body: JSON.stringify({
+                searches: embeddings.map(embedding => ({ vector: embedding, with_payload: true, limit: 1 }))
+              }),
+              headers: {
+                Accept: "application/json",
+              },
             },
-          },
-        );
-        const qdrantSearchJson = await qdrantSearchRespone.json();
-        console.log(qdrantSearchJson)
-        let ordered = qdrantSearchJson.result.flat().sort((a, b) => b.score - a.score);
+          );
+          const { result } = await qdrantSearchRespone.json();
+          return { original: chunk, payload: result[0].payload, score: result[0].score }
+        }));
+        let ordered = results.sort((a, b) => b.score - a.score);
         return ordered
       }
     } catch (err) {

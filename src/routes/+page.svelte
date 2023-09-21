@@ -1,47 +1,27 @@
 <script lang="ts">
-  import { enhance } from "$app/forms";
+  import { enhance } from '$app/forms';
 
-  import { MetaTags } from "svelte-meta-tags";
-  import Dropzone from "svelte-file-dropzone/Dropzone.svelte";
-  import Loader from "$lib/Loader.svelte";
+  import { MetaTags } from 'svelte-meta-tags';
+  import Dropzone from 'svelte-file-dropzone/Dropzone.svelte';
+  import Loader from '$lib/Loader.svelte';
 
   let loading = false;
   let files: any;
   let fileInput: HTMLInputElement;
   let error: string | undefined = undefined;
+  let results: any[] = [];
 
-  function handleFilesSelect(e: {
-    detail: { acceptedFiles: File[]; fileRejections: File[] };
-  }) {
+  function handleFilesSelect(e: { detail: { acceptedFiles: File[]; fileRejections: File[] } }) {
     const { acceptedFiles, fileRejections } = e.detail;
-    console.log(acceptedFiles, "accepted");
-    console.log(fileRejections, "rejected");
+    console.log(acceptedFiles, 'accepted');
+    console.log(fileRejections, 'rejected');
   }
-
-  // const downloadDoc = async () => {
-  //   const filename = "Statement_of_work.pdf";
-  //   const response = await fetch(`/${filename}`);
-  //   const blob = await response.blob();
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement("a");
-  //   a.href = url;
-  //   a.download = filename;
-  //   a.click();
-  //   URL.revokeObjectURL(url);
-  // };
 </script>
 
-<MetaTags
-  title="Document search"
-  description="Drop a document and search for similar ones"
-/>
+<MetaTags title="Document search" description="Drop a document and search for similar ones" />
 
-<body
-  class="bg-gray-50 min-h-screen h-full flex flex-col items-center justify-center"
->
-  <h1 class="text-4xl md:text-5xl font-bold m-6 text-center">
-    Search contracts database
-  </h1>
+<body class="bg-gray-50 min-h-screen h-full flex flex-col items-center justify-center">
+  <h1 class="text-4xl md:text-5xl font-bold m-6 text-center">Search contracts database</h1>
   <p class="mb-4 mx-4">Drop your documents to search for similar ones</p>
   {#if error}
     <div class="rounded-2xl w-96 bg-base-100 shadow-xl">
@@ -49,6 +29,38 @@
         <p>{error}</p>
       </div>
     </div>
+  {:else if results.length !== 0}
+    {#each results as { original, matching, payload }}
+      <div class="grid grid-cols-3 gap-4 sm:grid-cols-3">
+        <div
+          class="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
+        >
+          <div class="min-w-0 flex-1">
+            <p class="text-sm text-gray-500">{original}</p>
+          </div>
+        </div>
+
+        <div
+          class="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
+        >
+          <div class="min-w-0 flex-1">
+            <p class="text-sm text-gray-500">{matching}</p>
+          </div>
+        </div>
+
+        <div
+          class="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
+        >
+          <div class="min-w-0 flex-1">
+            {#each payload.deliverables as deliverable}
+              <p class="text-sm text-gray-500">{deliverable}</p>
+            {/each}
+          </div>
+        </div>
+
+        <!-- More people... -->
+      </div>
+    {/each}
   {:else}
     <div class="mb-4">
       <form
@@ -59,6 +71,7 @@
           return async ({ result }) => {
             loading = false;
             console.log(result);
+            results = result.data;
             if (result?.error) {
               error = result?.error.message;
             }
@@ -113,8 +126,7 @@
           </div>
           {#if files?.length ?? 0 != 0}
             <div class="my-12 text-center">
-              <button
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-6 px-4 rounded"
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-6 px-4 rounded"
                 >Generate a better report</button
               >
             </div>

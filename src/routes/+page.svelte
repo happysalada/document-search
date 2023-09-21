@@ -30,13 +30,13 @@
       </div>
     </div>
   {:else if results.length !== 0}
-    {#each results as { matching, payload, score }}
+    {#each results as { original, payload, score }}
       <div class="grid grid-cols-3 gap-4 sm:grid-cols-3">
         <div
           class="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
         >
           <div class="min-w-0 flex-1">
-            <p class="text-sm text-gray-500">{payload.text}</p>
+            <p class="text-sm text-gray-500">{original}</p>
           </div>
         </div>
 
@@ -44,7 +44,7 @@
           class="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
         >
           <div class="min-w-0 flex-1">
-            <p class="text-sm text-gray-500">{score} {matching}</p>
+            <p class="text-sm text-gray-500">{score} {payload.text}</p>
           </div>
         </div>
 

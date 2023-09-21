@@ -54,7 +54,7 @@ export const actions = {
             },
           );
           const { result } = await qdrantSearchRespone.json();
-          return { original: chunk, payload: result[0].payload, score: result[0].score }
+          return { original: chunk, payload: result[0].payload, score: result[0].score, matching: result[0].text }
         }));
         let ordered = results.sort((a, b) => b.score - a.score);
         return ordered

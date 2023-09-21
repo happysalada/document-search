@@ -4,7 +4,7 @@ import { QdrantClient } from "@qdrant/qdrant-js";
 
 // Replace with your actual Hugging Face API token
 const CHUNK_SIZE: number = 512;
-const COLLECTION: string = "agora_anonymised_2";
+const COLLECTION: string = "agora_anonymised_3";
 const hf = new HfInference(process.env.HUGGINGFACE_API_TOKEN);
 const client = new QdrantClient({
   host: "127.0.0.1",
@@ -49,7 +49,7 @@ const main = async (documents: Document[]): Promise<void> => {
               {
                 id: documentIndex * 10 + chunkIndex,
                 vector: embeddings,
-                payload,
+                payload: { ...payload, text: chunk }
               },
             ],
           });

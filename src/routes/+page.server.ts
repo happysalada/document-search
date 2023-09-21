@@ -44,7 +44,9 @@ export const actions = {
             {
               method: "POST",
               body: JSON.stringify({
-                searches: embeddings.map(embedding => ({ vector: embedding, with_payload: true, limit: 1 }))
+                vector: embeddings,
+                with_payload: true,
+                limit: 1
               }),
               headers: {
                 Accept: "application/json",

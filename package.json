@@ -51,6 +51,6 @@
   "dependencies": {
     "@huggingface/inference": "^2.6.1",
     "email-validator": "^2.0.4",
-    "surrealdb.js": "^0.9.0"
+    "surrealdb.js": "^0.10.1"
   }
 }
